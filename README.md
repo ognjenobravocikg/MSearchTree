@@ -7,7 +7,7 @@ https://www.linkedin.com/in/ognjen-obradovic-1048b829a/
 ognjenobradovickg@gmail.com
 
 RUNNING THE PROJECT:
-To start the GUI make sure that you have all the necessary libraries installed on a virtual enviorment or python interpreter, after that using command line or any other software open the directory where the code is positioned and run GUI.py as a python file.
+<br><br>To start the GUI make sure that you have all the necessary libraries installed on a virtual enviorment or python interpreter, after that using command line or any other software open the directory where the code is positioned and run GUI.py as a python file.
 
 TECHNOLOGIES, LIBRARIES AND USES:
 1. TK libraries (used for creating the GUI of the application)
