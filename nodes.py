@@ -1,65 +1,76 @@
 class MNode:
-    def __init__(self,m):
-        self.keys=[]
-        self.children=[]
-        self.m=m                
+    def __init__(self, m):
+        self.m = m
+        self.keys = []
+        self.children = []
 
-    def isLeaf(self):
-        if len(self.children) == 0:
-            return 0
-        return 1
-
-    def insertKey(self, key):
-        if (len(self.keys)>self.m):
-            self.keys.append(key)
-            self.redistribute()
-        else:
+    def insert(self, key):
+        if not self.children:
             self.keys.append(key)
             self.keys.sort()
-
-    def isFull(self, key):
-        return (len(self.keys)==self.m)
-    
-    def isEmpty(self, key):
-        return (len(self.keys)==0)
-
-    def redistribute(self):
-        middle_index = len(self.keys) // 2 
-        left_keys = self.keys[:middle_index]
-        right_keys = self.keys[middle_index+1:]
-
-        left = MNode(self.m)
-        left.keys = left_keys
-        left.children = self.children[:middle_index+1]
-
-        right = MNode(self.m)
-        right.keys = right_keys
-        right.children = self.children[middle_index+1:]
-
-        middle_key = self.keys[middle_index]  
-        self.keys = [middle_key] 
-        self.children = [left, right]
-
-    def print_tree(self, depth=0, position=None):
-        tree_str = ""
-        indent = "  " * depth
-        if position is None:
-            tree_str += f"{indent}Root: Keys: {self.keys}\n"
+            if len(self.keys) >= self.m:
+                return self.split()
         else:
-            tree_str += f"{indent}{position.capitalize()} Child: Keys: {self.keys}\n"
-        for i, child in enumerate(self.children):
-            if child:
-                tree_str += child.print_tree(depth + 1, "left" if i == 0 else "right")
-        return tree_str
+            for i, item in enumerate(self.keys):
+                if key < item:
+                    res = self.children[i].insert(key)
+                    if res:
+                        return self.handle_split(res, i)
+                    return None
+            res = self.children[-1].insert(key)
+            if res:
+                return self.handle_split(res, len(self.keys))
+        return None
 
-    def __repr__(self):
-        return f"Keys: {self.keys}, Children: {len(self.children)}"
+    def split(self):
+        mid_index = len(self.keys) // 2
+        mid_value = self.keys[mid_index]
+
+        left_child = MNode(self.m)
+        right_child = MNode(self.m)
+        
+        left_child.keys = self.keys[:mid_index]
+        right_child.keys = self.keys[mid_index+1:]
+
+        if self.children:
+            left_child.children = self.children[:mid_index + 1]
+            right_child.children = self.children[mid_index + 1:]
+
+        return mid_value, left_child, right_child
+
+    def handle_split(self, split_data, index):
+        mid_value, left_child, right_child = split_data
+
+        self.keys.insert(index, mid_value)
+        self.children[index] = left_child
+        self.children.insert(index + 1, right_child)
+
+        if len(self.keys) >= self.m:
+            return self.split()
+        return None
+
+    def print_tree(self, depth=0, child_type='root'):
+        result = " " * (4 * depth) + f"{child_type.upper()} {self.keys}\n"
+        for i, child in enumerate(self.children):
+            child_type = 'left' if i == 0 else 'right' if i == len(self.children) - 1 else 'middle'
+            result += child.print_tree(depth + 1, child_type)
+        return result
+
+    def search(self, key, level=0):
+        for i, item in enumerate(self.keys):
+            if key == item:
+                return f"Found {key} at level {level}"
+            elif key < item:
+                if self.children:
+                    return self.children[i].search(key, level + 1)
+                return None
+        if self.children:
+            return self.children[-1].search(key, level + 1)
+        return None
 
 class MSearchTree:
     def __init__(self, m):
         self.root = MNode(m)
 
-    def get_root(self):
-        return self.root
-
-
+    def search(self, key):
+        return self.root.search(key)
