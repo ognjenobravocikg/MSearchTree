@@ -4,24 +4,6 @@ class MNode:
         self.keys = []
         self.children = []
 
-    def insert(self, key):
-        if not self.children:
-            self.keys.append(key)
-            self.keys.sort()
-            if len(self.keys) >= self.m:
-                return self.split()
-        else:
-            for i, item in enumerate(self.keys):
-                if key < item:
-                    res = self.children[i].insert(key)
-                    if res:
-                        return self.handle_split(res, i)
-                    return None
-            res = self.children[-1].insert(key)
-            if res:
-                return self.handle_split(res, len(self.keys))
-        return None
-
     def split(self):
         mid_index = len(self.keys) // 2
         mid_value = self.keys[mid_index]
@@ -56,52 +38,6 @@ class MNode:
             result += child.print_tree(depth + 1, child_type)
         return result
 
-    def search(self, key, level=0):
-        for i, item in enumerate(self.keys):
-            if key == item:
-                return f"Found {key} at level {level}"
-            elif key < item:
-                if self.children:
-                    return self.children[i].search(key, level + 1)
-                return None
-        if self.children:
-            return self.children[-1].search(key, level + 1)
-        return None
-
-    def delete(self, key):
-        if key in self.keys:
-            index = self.keys.index(key)
-            if not self.children:
-                # Case 1: Leaf node
-                self.keys.pop(index)
-            else:
-                # Case 2 & 3: Non-leaf node
-                if len(self.children[index].keys) > 0:
-                    # Get predecessor (max value in the left subtree)
-                    predecessor = self.get_predecessor(index)
-                    self.keys[index] = predecessor
-                    self.children[index].delete(predecessor)
-                else:
-                    # Get successor (min value in the right subtree)
-                    successor = self.get_successor(index)
-                    self.keys[index] = successor
-                    self.children[index + 1].delete(successor)
-        else:
-            # Traverse to find the key
-            for i, item in enumerate(self.keys):
-                if key < item:
-                    if self.children:
-                        self.children[i].delete(key)
-                    break
-            else:
-                if self.children:
-                    self.children[-1].delete(key)
-
-        # Fix the node if necessary
-        self.fix_node()
-        return self
-
-    # Helper functions for deletion
     def get_predecessor(self, index):
         current = self.children[index]
         while current.children:
@@ -150,7 +86,7 @@ class MNode:
                     else:
                         self.merge_children(i)
                 break
-
+    
     def get_left_subtree(self, key):
         for i, item in enumerate(self.keys):
             if key == item:
@@ -187,10 +123,91 @@ class MNode:
     def getMinNum(self):
         return self.keys[-1]
 
-
 class MSearchTree:
     def __init__(self, m):
         self.root = MNode(m)
 
+    def insert(self, key):
+        res = self.root.insert(key)
+        if res:
+            mid_value, left_child, right_child = res
+            new_root = MNode(self.root.m)
+            new_root.keys = [mid_value]
+            new_root.children = [left_child, right_child]
+            self.root = new_root
+
     def search(self, key):
         return self.root.search(key)
+
+    def delete(self, key):
+        self.root = self.root.delete(key)
+        if not self.root.keys and self.root.children:
+            self.root = self.root.children[0]
+
+# Adding the methods to MNode class
+def insert(self, key):
+    if not self.children:
+        self.keys.append(key)
+        self.keys.sort()
+        if len(self.keys) >= self.m:
+            return self.split()
+    else:
+        for i, item in enumerate(self.keys):
+            if key < item:
+                res = self.children[i].insert(key)
+                if res:
+                    return self.handle_split(res, i)
+                return None
+        res = self.children[-1].insert(key)
+        if res:
+            return self.handle_split(res, len(self.keys))
+    return None
+
+def search(self, key, level=0):
+    for i, item in enumerate(self.keys):
+        if key == item:
+            return f"Found {key} at level {level}"
+        elif key < item:
+            if self.children:
+                return self.children[i].search(key, level + 1)
+            return None
+    if self.children:
+        return self.children[-1].search(key, level + 1)
+    return None
+
+def delete(self, key):
+    if key in self.keys:
+        index = self.keys.index(key)
+        if not self.children:
+            # Case 1: Leaf node
+            self.keys.pop(index)
+        else:
+            # Case 2 & 3: Non-leaf node
+            if len(self.children[index].keys) > 0:
+                # Get predecessor (max value in the left subtree)
+                predecessor = self.get_predecessor(index)
+                self.keys[index] = predecessor
+                self.children[index].delete(predecessor)
+            else:
+                # Get successor (min value in the right subtree)
+                successor = self.get_successor(index)
+                self.keys[index] = successor
+                self.children[index + 1].delete(successor)
+    else:
+        # Traverse to find the key
+        for i, item in enumerate(self.keys):
+            if key < item:
+                if self.children:
+                    self.children[i].delete(key)
+                break
+        else:
+            if self.children:
+                self.children[-1].delete(key)
+
+    # Fix the node if necessary
+    self.fix_node()
+    return self
+
+MNode.insert = insert
+MNode.search = search
+MNode.delete = delete
