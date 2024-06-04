@@ -14,5 +14,7 @@ TECHNOLOGIES, LIBRARIES AND USES:
 2. Miniconda (used for maintaining the python enviorment)
 
 REFERENCES:
-1. https://www.w3schools.com/python/python_variables_global.asp
-2. https://www.youtube.com/watch?v=A9Uc2k12Fwc&t=794s&ab_channel=SimpleSnippets
+1. (https://www.geeksforgeeks.org/m-way-search-trees-set-1-searching/)
+2. https://www.geeksforgeeks.org/m-way-search-tree-set-2-insertion-and-deletion/
+3. https://www.youtube.com/watch?v=A9Uc2k12Fwc&t=794s&ab_channel=SimpleSnippets
+4. https://www.youtube.com/watch?v=P49yi5uiNZ0&ab_channel=SimpleSnippets
