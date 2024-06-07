@@ -8,12 +8,9 @@ class MNode:
 
     def insert(self, key):
         try:
-            # Try to search for the key
             self.search(key)
-            # If no exception is raised, the key is already in the tree
             raise DuplicateKeyException(key)
         except NodeNotFoundException:
-            # If the key is not found, proceed with insertion
             if not self.children:
                 self.keys.append(key)
                 self.keys.sort()
